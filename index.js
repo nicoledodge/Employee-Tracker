@@ -1,12 +1,12 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-
+// require('console.table')
 
 const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: 'password',
         database: 'work_db'
     },
     console.log(`Connected to the work_db database.`)
@@ -61,17 +61,97 @@ const initialPrompt = () => {
 //added filler sql terms & still need to fill out schema & seeds
 const displayEmployees = () => {
     db.query('SELECT * FROM employee', function (err, results) {
-        console.table(results);
+        console.log(results);
+        initialPrompt();
     });
 }
 const displayDepartments = () => {
     db.query('SELECT * FROM department', function (err, results) {
-        console.table(results);
+        console.log(results);
+        initialPrompt();
     });
 }
 const displayRoles = () => {
     db.query('SELECT * FROM role', function (err, results) {
-        console.table(results);
+        console.log(results);
+        initialPrompt();
     });
 }
 //functions for view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+const addRole = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the New Role?',
+                name: 'newrole'
+            },
+            {
+                type: 'input',
+                message: 'What is the salary of the New Role?',
+                name: 'newsalary'
+            },
+            {
+                type: 'input',
+                message: 'What department does the New Role belong to?',
+                name: 'newroledepartment'
+            }
+        ]).then(data => {
+
+            const newrole = {
+                role_title : data.newrole,
+                department_id : data.newroledepartment,
+                salary : data.newsalary
+            }
+            db.query
+    })
+}
+
+const addEmployee = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the new employee?'
+                name: 'newrole'
+            },
+            {
+                type: 'input',
+                message: 'What is the name of the new employee?'
+                name: 'newrole'
+            },
+            {
+                type: 'input',
+                message: 'What is the name of the new employee?'
+                name: 'newrole'
+            },
+            {
+                type: 'input',
+                message: 'What is the name of the new employee?'
+                name: 'newrole'
+            }
+        ]).then(data => {
+
+        const newrole = {
+
+        }
+        db.query
+    })
+}
+
+const updateEmployee = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the New Role?'
+                name: 'newrole'
+            }
+        ]).then(data => {
+
+        const newrole = {
+
+        }
+        db.query
+    })
+}
