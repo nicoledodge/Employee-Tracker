@@ -31,30 +31,30 @@ const initialPrompt = () => {
         ]).then(data => {
         // data.initialPrompt = undefined;
         switch (data.initialPrompt) {
-                case "View All Employees":
-                    displayEmployees();
-                    break;
-                case "Add Employee":
-                    addEmployee();
-                    break;
-                case "View All Roles":
-                    displayRoles();
-                    break;
-                case "Update Employee Role":
-                    updateEmployee();
-                    break;
-                case "Add Role":
-                    addRole();
-                    break;
-                case "View All Departments":
-                    displayDepartments();
-                    break;
-                case "Add Department":
-                    displayEmployees();
-                    break;
-                default:
-                    break;
-            }
+            case "View All Employees":
+                displayEmployees();
+                break;
+            case "Add Employee":
+                addEmployee();
+                break;
+            case "View All Roles":
+                displayRoles();
+                break;
+            case "Update Employee Role":
+                updateEmployee();
+                break;
+            case "Add Role":
+                addRole();
+                break;
+            case "View All Departments":
+                displayDepartments();
+                break;
+            case "Add Department":
+                displayEmployees();
+                break;
+            default:
+                break;
+        }
     })
 }
 //const for viewing ALL of something using query and producing console.table via sql
@@ -98,12 +98,12 @@ const addRole = () => {
             }
         ]).then(data => {
 
-            const newrole = {
-                role_title : data.newrole,
-                department_id : data.newroledepartment,
-                salary : data.newsalary
-            }
-            db.query
+        const newrole = {
+            role_title: data.newrole,
+            department_id: data.newroledepartment,
+            salary: data.newsalary
+        }
+        db.query
     })
 }
 
@@ -112,46 +112,62 @@ const addEmployee = () => {
         .prompt([
             {
                 type: 'input',
-                message: 'What is the name of the new employee?'
-                name: 'newrole'
+                message: 'What is the first name of the new employee?'
+                name: 'firstname'
             },
             {
                 type: 'input',
-                message: 'What is the name of the new employee?'
-                name: 'newrole'
+                message: 'What is the last name of the new employee?'
+                name: 'lastname'
             },
             {
                 type: 'input',
-                message: 'What is the name of the new employee?'
-                name: 'newrole'
+                message: 'What is the role of the new employee?'
+                name: 'newemployeeid'
             },
             {
                 type: 'input',
-                message: 'What is the name of the new employee?'
-                name: 'newrole'
+                message: 'What is the manager of the new employee?'
+                name: 'employeemanager'
             }
         ]).then(data => {
 
-        const newrole = {
-
+        const newEmployee = {
+            first_name: data.firstname,
+            last_name: data.lastname,
+            role_id: data.newemployeeid,
+            manager_id: data.employeemanager
         }
-        db.query
+        db.query//insert into employee table
     })
 }
 
 const updateEmployee = () => {
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: 'What is the name of the New Role?'
-                name: 'newrole'
+
+    // select * from existing employee table
+    db.query("SELECT * FROM employee", (err, res) => {
+
+
+        inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    message: 'Which employee would you like to update?',
+                    //choices needs to include method to pick up all employee's first and last names
+                    name: 'getemployeelist'
+                },
+                {
+                    type: 'input',
+                    message: "What is the new role of the employee?",
+                    name: 'employeenewrole'
+                }
+            ]).then(data => {
+
+            const updateEmployee = {
+                employeeNewRole: data.employeenewrole,
             }
-        ]).then(data => {
+            //db query back into employee table then revert back to initial prompt function
+        })
 
-        const newrole = {
-
-        }
-        db.query
     })
 }
