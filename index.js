@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-// require('console.table')
+//puts "view all" in table format on console
+require('console.table');
 
 const db = mysql.createConnection(
     {
@@ -50,7 +51,7 @@ const initialPrompt = () => {
                 displayDepartments();
                 break;
             case "Add Department":
-                displayEmployees();
+                addDepartment();
                 break;
             default:
                 break;
@@ -61,23 +62,41 @@ const initialPrompt = () => {
 //added filler sql terms & still need to fill out schema & seeds
 const displayEmployees = () => {
     db.query('SELECT * FROM employee', function (err, results) {
-        console.log(results);
+        console.table(results);
         initialPrompt();
     });
 }
 const displayDepartments = () => {
     db.query('SELECT * FROM department', function (err, results) {
-        console.log(results);
+        console.table(results);
         initialPrompt();
     });
 }
 const displayRoles = () => {
     db.query('SELECT * FROM role', function (err, results) {
-        console.log(results);
+        console.table(results);
         initialPrompt();
     });
 }
 //functions for view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+const addDepartment = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the New Department?',
+                name: 'newdepartment'
+            }
+        ]).then(data => {
+        const newdepartment = {
+            name: data.newdepartment
+        }
+        db.query('INSERT INTO department', newdepartment, function (err, results) {
+            initialPrompt();
+        })
+    })
+}
+
 const addRole = () => {
     inquirer
         .prompt([
@@ -98,12 +117,14 @@ const addRole = () => {
             }
         ]).then(data => {
 
-        const newrole = {
+        const newRole = {
             role_title: data.newrole,
             department_id: data.newroledepartment,
             salary: data.newsalary
         }
-        db.query
+        db.query('INSERT INTO role', newRole, function (err, results) {
+            initialPrompt();
+        })
     })
 }
 
@@ -112,22 +133,22 @@ const addEmployee = () => {
         .prompt([
             {
                 type: 'input',
-                message: 'What is the first name of the new employee?'
+                message: 'What is the first name of the new employee?',
                 name: 'firstname'
             },
             {
                 type: 'input',
-                message: 'What is the last name of the new employee?'
+                message: 'What is the last name of the new employee?',
                 name: 'lastname'
             },
             {
                 type: 'input',
-                message: 'What is the role of the new employee?'
+                message: 'What is the role of the new employee?',
                 name: 'newemployeeid'
             },
             {
                 type: 'input',
-                message: 'What is the manager of the new employee?'
+                message: 'What is the manager of the new employee?',
                 name: 'employeemanager'
             }
         ]).then(data => {
@@ -138,7 +159,10 @@ const addEmployee = () => {
             role_id: data.newemployeeid,
             manager_id: data.employeemanager
         }
-        db.query//insert into employee table
+        //insert into employee table
+        db.query('INSERT INTO employee', newEmployee, function (err, results) {
+            initialPrompt();
+        })
     })
 }
 
@@ -167,7 +191,9 @@ const updateEmployee = () => {
                 employeeNewRole: data.employeenewrole,
             }
             //db query back into employee table then revert back to initial prompt function
+            db.query('INSERT INTO employee', updateEmployee, function (err, results) {
+                initialPrompt();
+            })
         })
-
     })
 }
