@@ -1,4 +1,4 @@
-USE work_db;
+USE factory_db;
 
 INSERT into department ( name)
 VALUES
@@ -16,4 +16,7 @@ INSERT into employee ( first_name, last_name, role_id, manager_id)
 VALUES
     ( "Tyler", "Miles", 1, 1),
     ( "Richard", "Scott", 2, 1),
-    ( "Ray", "Charles", 3, 1);
+    ( "Ray", "Charles", 3, 1),
+    ( "Nikki", "Minaj", 1, 1),
+    ( "Taylor", "Murphy", 2, 1),
+    ( "Ludkin", "Allen", 3, 3);

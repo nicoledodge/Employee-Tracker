@@ -8,9 +8,9 @@ const db = mysql.createConnection(
         host: 'localhost',
         user: 'root',
         password: 'password',
-        database: 'work_db'
+        database: 'factory_db'
     },
-    console.log(`Connected to the work_db database.`)
+    console.log(`Connected to the factory_db database.`)
 );
 db.connect(
     (err) => {
@@ -88,10 +88,8 @@ const addDepartment = () => {
                 name: 'newdepartment'
             }
         ]).then(data => {
-        const newdepartment = {
-            name: data.newdepartment
-        }
-        db.query('INSERT INTO department', newdepartment, function (err, results) {
+        db.query(`INSERT INTO department (name) VALUES ('${data.newdepartment}');`, function (err, results) {
+            // console.table(results);
             initialPrompt();
         })
     })
@@ -116,13 +114,8 @@ const addRole = () => {
                 name: 'newroledepartment'
             }
         ]).then(data => {
-
-        const newRole = {
-            role_title: data.newrole,
-            department_id: data.newroledepartment,
-            salary: data.newsalary
-        }
-        db.query('INSERT INTO role', newRole, function (err, results) {
+        db.query(`INSERT INTO role (role_title, department_id, salary) VALUES ('${data.newrole}', '${data.newroledepartment}', '${data.newsalary}');`, function (err, results) {
+            // console.table(results);
             initialPrompt();
         })
     })
@@ -152,32 +145,24 @@ const addEmployee = () => {
                 name: 'employeemanager'
             }
         ]).then(data => {
-
-        const newEmployee = {
-            first_name: data.firstname,
-            last_name: data.lastname,
-            role_id: data.newemployeeid,
-            manager_id: data.employeemanager
-        }
         //insert into employee table
-        db.query('INSERT INTO employee', newEmployee, function (err, results) {
+        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${data.firstname}', '${data.lastname}', '${data.newemployeeid}', '${data.newemployeemanager}');`, function (err, results) {
+            console.table(results);
             initialPrompt();
         })
     })
 }
 
 const updateEmployee = () => {
-
     // select * from existing employee table
-    db.query("SELECT * FROM employee", (err, res) => {
-
-
+    db.query(`SELECT * FROM employee`, (err, res, employee) => {
         inquirer
             .prompt([
                 {
                     type: 'list',
                     message: 'Which employee would you like to update?',
                     //choices needs to include method to pick up all employee's first and last names
+                    choices: employee.map(employee => ({name: `${employee.first_name} ${employee.last_name}`, value: employee.id})),
                     name: 'getemployeelist'
                 },
                 {
@@ -191,7 +176,7 @@ const updateEmployee = () => {
                 employeeNewRole: data.employeenewrole,
             }
             //db query back into employee table then revert back to initial prompt function
-            db.query('INSERT INTO employee', updateEmployee, function (err, results) {
+            db.query(`UPDATE employee SET role_id=${data.employeenewrole} WHERE role_id=employee`, function (err, results) {
                 initialPrompt();
             })
         })

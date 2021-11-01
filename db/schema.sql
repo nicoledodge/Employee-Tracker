@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS work_db;
+DROP DATABASE IF EXISTS factory_db;
 
-CREATE DATABASE work_db;
+CREATE DATABASE factory_db;
 
-USE work_db;
+USE factory_db;
 # create three tables for departments roles and employees
 
 CREATE TABLE department (
