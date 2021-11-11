@@ -131,7 +131,7 @@ const addRole = () => {
                 const department = data.department;
                 addRole.push(department);
                 // console.log(addRole);
-                db.query(`INSERT INTO role (title, salary, department_id)
+                db.query(`INSERT INTO role (role_title, salary, department_id)
                           VALUES (?, ?, ?)`, addRole, (err, result) => {
                     if (err) {
                         console.log(err);
@@ -187,7 +187,7 @@ const addEmployee = () => {
                     ]).then((data) => {
                         addEmployee.push(data.managers);
                         // console.log(addEmployee);
-                        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                        db.query(`INSERT INTO employee (first_name, last_name, role_title, manager_id)
                                   VALUES (?, ?, ?, ?)`, addEmployee, (err, result) => {
                             if (err) {
                                 console.log(err);
@@ -219,12 +219,13 @@ const updateEmployee = () => {
             const updateRole = [data.updateemployee];
             db.query(`SELECT role_title, id FROM role`, (err, result) => {
                 const roleTable = result.map(({ id, role_title }) => ({ name:role_title, value:id }));
-                inquirer.prompt([
+                inquirer
+                    .prompt([
                     {
                         type: 'list',
                         name: 'role',
-                        message: "Select the new employee's role.",
-                        choices: roleTable
+                        message: "Select the employee's new role.",
+                        choices: roleTable,
                     }
                 ]).then((data) =>{
                     updateRole.unshift(data.role);

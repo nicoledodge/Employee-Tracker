@@ -1,6 +1,6 @@
 # Employee-Tracker
 ## Mock-up
-![Team Profile Demo]()
+https://watch.screencastify.com/v/SzAnibicwQ5LKJBvS7pF
 ## Licenses
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## Table of Contents:
