@@ -117,8 +117,7 @@ const addRole = () => {
         ]).then(data => {
         const addRole = [data.title, data.salary];
         // searches the db for a list of deparments the role can be assigned too
-        let query = db.query(`SELECT name, id
-                              FROM department`, (err, result) => {
+        let query = db.query(`SELECT name, id  FROM department`, (err, result) => {
             const departmentTable = result.map(({id, name}) => ({name: name, value: id}));
 
             inquirer.prompt([
@@ -159,21 +158,46 @@ const addEmployee = () => {
                 message: 'What is the last name of the new employee?',
                 name: 'lastname'
             },
-            {
-                type: 'input',
-                message: 'What is the role of the new employee?',
-                name: 'newemployeeid'
-            },
-            {
-                type: 'input',
-                message: 'What is the manager of the new employee?',
-                name: 'employeemanager'
-            }
-        ]).then(data => {
-        //insert into employee table
-        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${data.firstname}', '${data.lastname}', '${data.newemployeeid}', '${data.newemployeemanager}');`, function (err, results) {
-            console.table(results);
-            initialPrompt();
+        ]).then((data) => {
+        const addEmployee = [data.firstname, data.lastname];
+        db.query(`SELECT role_title, id FROM role`, (err, result) => {
+            const roleTable = result.map(({ id, role_title }) => ({name: role_title, value: id}));
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: "Select the new employee's role.",
+                    choices: roleTable
+                },
+            ]).then(data => {
+                addEmployee.push(data.role);
+                db.query('SELECT * FROM employee', (err, result) => {
+                    const managers = result.map(({id, first_name, last_name}) => ({
+                        name: first_name + " " + last_name,
+                        value: id
+                    }));
+                    console.log(managers)
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'manager',
+                            message: "Select the new employee's manager.",
+                            choices: managers
+                        }
+                    ]).then((data) => {
+                        addEmployee.push(data.managers);
+                        // console.log(addEmployee);
+                        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                                  VALUES (?, ?, ?, ?)`, addEmployee, (err, result) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            console.log('Employee Added!');
+                            initialPrompt()
+                        });
+                    })
+                })
+            })
         })
     })
 }
