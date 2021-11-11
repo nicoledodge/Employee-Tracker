@@ -5,12 +5,12 @@ require('console.table');
 
 const db = mysql.createConnection(
     {
-        host: 'localhost',
+        host: '127.0.0.1',
         user: 'root',
         password: 'password',
         database: 'factory_db'
     },
-    console.log(`Connected to the factory_db database.`)
+    console.log(`Welcome to the Employee Tracker Database!`)
 );
 db.connect(
     (err) => {
@@ -155,14 +155,14 @@ const addEmployee = () => {
 
 const updateEmployee = () => {
     // select * from existing employee table
-    db.query(`SELECT * FROM employee`, (err, res, employee) => {
+    db.query(`SELECT * FROM employee`, (err, res) => {
         inquirer
             .prompt([
                 {
                     type: 'list',
                     message: 'Which employee would you like to update?',
                     //choices needs to include method to pick up all employee's first and last names
-                    choices: employee.map(employee => ({name: `${employee.first_name} ${employee.last_name}`, value: employee.id})),
+                    choices: res.map(employee => `${employee.first_name} ${employee.last_name}`),
                     name: 'getemployeelist'
                 },
                 {
@@ -171,12 +171,8 @@ const updateEmployee = () => {
                     name: 'employeenewrole'
                 }
             ]).then(data => {
-
-            const updateEmployee = {
-                employeeNewRole: data.employeenewrole,
-            }
             //db query back into employee table then revert back to initial prompt function
-            db.query(`UPDATE employee SET role_id=${data.employeenewrole} WHERE role_id=employee`, function (err, results) {
+            db.query(`UPDATE employee SET role_title=${data.employeenewrole} WHERE role_title=employee`, function (err, results) {
                 initialPrompt();
             })
         })

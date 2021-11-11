@@ -1,7 +1,6 @@
 # Employee-Tracker
-![Team Profile Demo]()
 ## Mock-up
-
+![Team Profile Demo]()
 ## Licenses
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## Table of Contents:
@@ -16,6 +15,22 @@
 ## Description
 
 ## Installation
+Clone down the repo:
+```
+git clone git@github.com:nicoledodge/express.gym.git
+```
+Install dependencies:
+```
+$ npm install
+```
+Run the seeds data:
+```
+$ npm run seed
+```
+Start server at http://localhost:3001/:
+```
+$ nodemon server.js
+```
 
 ## User Story
 
