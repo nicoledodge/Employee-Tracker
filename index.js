@@ -88,10 +88,16 @@ const addDepartment = () => {
                 name: 'newdepartment'
             }
         ]).then(data => {
-        db.query(`INSERT INTO department (name) VALUES ('${data.newdepartment}');`, function (err, results) {
-            // console.table(results);
-            initialPrompt();
-        })
+        let addDept = [data.newdepartment];
+        db.query(
+            "INSERT INTO department (name) VALUES (?)",addDept,(err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+                console.log('Department Added!');
+                initialPrompt();
+            }
+        );
     })
 }
 
@@ -108,18 +114,37 @@ const addRole = () => {
                 message: 'What is the salary of the New Role?',
                 name: 'newsalary'
             },
-            {
-                type: 'input',
-                message: 'What department does the New Role belong to?',
-                name: 'newroledepartment'
-            }
         ]).then(data => {
-        db.query(`INSERT INTO role (role_title, department_id, salary) VALUES ('${data.newrole}', '${data.newroledepartment}', '${data.newsalary}');`, function (err, results) {
-            // console.table(results);
-            initialPrompt();
+        const addRole = [data.title, data.salary];
+        // searches the db for a list of deparments the role can be assigned too
+        let query = db.query(`SELECT name, id
+                              FROM department`, (err, result) => {
+            const departmentTable = result.map(({id, name}) => ({name: name, value: id}));
+
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'department',
+                    message: "Select the new role's department",
+                    choices: departmentTable
+                }
+            ]).then(data => {
+                const department = data.department;
+                addRole.push(department);
+                // console.log(addRole);
+                db.query(`INSERT INTO role (title, salary, department_id)
+                          VALUES (?, ?, ?)`, addRole, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log('Role Added!');
+                    initialPrompt()
+                });
+            })
         })
-    })
+    });
 }
+
 
 const addEmployee = () => {
     inquirer
