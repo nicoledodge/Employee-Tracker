@@ -204,26 +204,40 @@ const addEmployee = () => {
 
 const updateEmployee = () => {
     // select * from existing employee table
-    db.query(`SELECT * FROM employee`, (err, res) => {
+    db.query(`SELECT * FROM employee`, (err, result) => {
+        const employee = result.map(({ id, first_name, last_name }) => ({name:first_name + " " + last_name, value:id }));
         inquirer
             .prompt([
                 {
                     type: 'list',
                     message: 'Which employee would you like to update?',
                     //choices needs to include method to pick up all employee's first and last names
-                    choices: res.map(employee => `${employee.first_name} ${employee.last_name}`),
-                    name: 'getemployeelist'
+                    choices: employee,
+                    name: 'updateemployee'
                 },
-                {
-                    type: 'input',
-                    message: "What is the new role of the employee?",
-                    name: 'employeenewrole'
-                }
-            ]).then(data => {
-            //db query back into employee table then revert back to initial prompt function
-            db.query(`UPDATE employee SET role_title=${data.employeenewrole} WHERE role_title=employee`, function (err, results) {
-                initialPrompt();
-            })
+            ]).then((data) => {
+            const updateRole = [data.updateemployee];
+            db.query(`SELECT role_title, id FROM role`, (err, result) => {
+                const roleTable = result.map(({ id, role_title }) => ({ name:role_title, value:id }));
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'role',
+                        message: "Select the new employee's role.",
+                        choices: roleTable
+                    }
+                ]).then((data) =>{
+                    updateRole.unshift(data.role);
+
+                    db.query(`UPDATE employee SET role_title = ? WHERE id = ? `, updateRole, (err, result) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log('Employee Updated!');
+                        initialPrompt()
+                    });
+                })
+            });
         })
     })
 }
